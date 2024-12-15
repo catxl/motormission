@@ -1,0 +1,65 @@
+{
+    "vars": [
+        ["$COMMON_MOTOR",     "0", "普通电机ID"],
+        ["$MISSION_TYPE",     "0", "任务类型"],
+        ["$DETECTOR",         "0", "探测器"],
+        ["$DETECTOR_PARAM_1", "0", "探测器启动参数1"],
+        ["$ERRCODE",          "0", "探测器未触发的返回码"]
+    ],
+    "states": {"START":"ENTRY", "ST_READY":"NORMAL", "ST_TARGETING":"NORMAL", "ST_COMPENSATE":"NORMAL", "ST_AGAIN":"NORMAL", "ST_CODED_END":"FINAL", "SUCC":"FINAL"},
+    "indicators":{
+        "C_TRY_LOCK":  ["INDCT_COMMON_MOTOR_GOTIT_IF_STOPED", ["$COMMON_MOTOR"],       "$COMMON_MOTOR 电机使用权获取成功"],
+        "C_MOVE_DONE": ["INDCT_COMMON_MOTOR_STOPPED",         ["$COMMON_MOTOR"],         "$COMMON_MOTOR 电机运动完成"],
+        "C_ACTIVE":    ["INDCT_DETECTOR_TRIGGERED",           ["$DETECTOR"],    "$DETECTOR 探测器激活"],
+        "C_NOT_ACT":   ["INDCT_DETECTOR_NOT_TRIGGERED",       ["$DETECTOR"],    "$DETECTOR 探测器未激活"],
+        "C_COMPENSATE_DONE": ["INDCT_COMMON_MOTOR_COMPENSATE_DONE",    ["$COMMON_MOTOR"],  "$COMMON_MOTOR 电机补偿运动完成"],
+        "C_NOT_MEET_DETECTOR": ["INDCT_LOGIC_AND",            ["2", "C_MOVE_DONE", "C_NOT_ACT"],      "走完了探测器也未触发"]
+    },
+    "actions":{
+        "A_NO_OP":[
+            ["ACT_NO_OPERATION", []],
+            "静观其变"
+        ],
+        "A_TARGET":[
+            ["ACT_DETECTOR_START", ["$DETECTOR", "$DETECTOR_PARAM_1"]],
+            ["ACT_COMMON_MOTOR_MOVE_STEP_X", ["$COMMON_MOTOR", "$MISSION_TYPE", "0"]],
+            "启动探测器，电机向目标方向移动"
+        ],
+        "A_AGAIN":[
+            ["ACT_COMMON_MOTOR_MOVE_STEP_X", ["$COMMON_MOTOR", "$MISSION_TYPE", "1"]],
+            "电机补偿移动1"
+        ],
+        "A_COMPENSATE":[
+            ["ACT_COMMON_MOTOR_MV_COMPENSATE", ["$COMMON_MOTOR", "$MISSION_TYPE"]],
+            "电机补偿移动2"
+        ],
+        "A_QUICK_CLEAR":[
+            ["ACT_COMMON_MOTOR_RELEASE", ["$COMMON_MOTOR"]],
+            ["ACT_COMMON_MOTOR_DONE", ["$COMMON_MOTOR", "$MISSION_TYPE", "0"]],
+            "释放电机，操作结束"
+        ],
+        "A_CODED_CLEAR":[
+            ["ACT_DETECTOR_STOP", ["$DETECTOR"]],
+            ["ACT_COMMON_MOTOR_RELEASE", ["$COMMON_MOTOR"]],
+            ["ACT_COMMON_MOTOR_DONE", ["$COMMON_MOTOR", "$MISSION_TYPE", "$ERRCODE"]],
+            "停止探测器，释放电机，操作结束"
+        ],
+        "A_CLEAR":[
+            ["ACT_DETECTOR_STOP", ["$DETECTOR"]],
+            ["ACT_COMMON_MOTOR_RELEASE", ["$COMMON_MOTOR"]],
+            ["ACT_COMMON_MOTOR_DONE", ["$COMMON_MOTOR", "$MISSION_TYPE", "0"]],
+            "停止探测器，释放电机，操作成功"
+        ]
+    },
+    "transformers":[
+        ["START",         "C_TRY_LOCK",          "A_NO_OP",       ["ST_READY"]],
+        ["ST_READY",      "C_ACTIVE",            "A_QUICK_CLEAR", ["SUCC"]],
+        ["ST_READY",      "C_NOT_ACT",           "A_TARGET",      ["ST_TARGETING"]],
+        ["ST_TARGETING",  "C_NOT_MEET_DETECTOR", "A_AGAIN",       ["ST_AGAIN"]],
+        ["ST_TARGETING",  "C_ACTIVE",            "A_COMPENSATE",  ["ST_COMPENSATE"]],
+        ["ST_AGAIN",      "C_NOT_MEET_DETECTOR", "A_CODED_CLEAR", ["ST_CODED_END"]],
+        ["ST_AGAIN",      "C_ACTIVE",            "A_COMPENSATE",  ["ST_COMPENSATE"]],
+        ["ST_COMPENSATE", "C_COMPENSATE_DONE",   "A_CLEAR",       ["SUCC"]]
+    ],
+    "instance_number":6
+}

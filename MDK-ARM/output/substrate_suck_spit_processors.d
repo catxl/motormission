@@ -1,0 +1,11 @@
+.\output\substrate_suck_spit_processors.o: ..\processor\substrate_suck_spit_processors.c
+.\output\substrate_suck_spit_processors.o: ..\processor\substrate_suck_spit_processors.h
+.\output\substrate_suck_spit_processors.o: ..\common.h
+.\output\substrate_suck_spit_processors.o: ..\public\public_valves.h
+.\output\substrate_suck_spit_processors.o: ..\worker\valves.h
+.\output\substrate_suck_spit_processors.o: ..\worker\timers.h
+.\output\substrate_suck_spit_processors.o: ..\public\public_timers.h
+.\output\substrate_suck_spit_processors.o: ..\worker\common_motors.h
+.\output\substrate_suck_spit_processors.o: ..\public_extern\public_common_motors_extern.h
+.\output\substrate_suck_spit_processors.o: ..\public\public_common_motors.h
+.\output\substrate_suck_spit_processors.o: ..\public\public_step_motors.h

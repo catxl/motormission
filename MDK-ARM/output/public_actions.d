@@ -1,0 +1,12 @@
+.\output\public_actions.o: ..\public\public_actions.c
+.\output\public_actions.o: ..\public\public_missions.h
+.\output\public_actions.o: ..\common.h
+.\output\public_actions.o: ..\public_extern\public_actions_extern.h
+.\output\public_actions.o: ..\public\public_actions.h
+.\output\public_actions.o: ..\public\public_valves.h
+.\output\public_actions.o: ..\public\public_step_motors.h
+.\output\public_actions.o: ..\public\public_dc_motors.h
+.\output\public_actions.o: ..\public\public_timers.h
+.\output\public_actions.o: ..\public\public_switches.h
+.\output\public_actions.o: ..\public\public_common_motors.h
+.\output\public_actions.o: ..\public\public_detectors.h

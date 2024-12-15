@@ -1,0 +1,10 @@
+.\output\public_missions.o: ..\public\public_missions.c
+.\output\public_missions.o: ..\public\public_missions.h
+.\output\public_missions.o: ..\common.h
+.\output\public_missions.o: ..\public\public_indicators.h
+.\output\public_missions.o: ..\public\public_actions.h
+.\output\public_missions.o: ..\errcode.h
+.\output\public_missions.o: ..\processor\cmd_proc_func.h
+.\output\public_missions.o: ..\io\byte_sequence.h
+.\output\public_missions.o: ..\io\commpacket.h
+.\output\public_missions.o: ..\utils.h

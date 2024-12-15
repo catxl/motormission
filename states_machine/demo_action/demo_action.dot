@@ -1,0 +1,27 @@
+digraph G{
+    label = "demo_action"
+    node [style = filled, color = Green, fontcolor = Red, fontsize = 12, shape = ellipse];
+    {
+        START[label = "START"];
+    }
+    node [style = filled, color = Gray, fontcolor = Red, fontsize = 12, shape = ellipse];
+    {
+    }
+    node [style = filled, color = RED, fontcolor = Black, fontsize = 12, shape = doublecircle];
+    {
+        SUCC[label = "SUCC"];
+    }
+
+    node [fontname="FangSong", style = filled, color = Yellow, fontcolor = Red, fontsize = 12, shape = diamond];
+    {
+        START_C_GO[label = "C_GO: GO"];
+    }
+    
+    node [fontname="FangSong", style = filled, color = lightskyblue, fontcolor = Black, fontsize = 12, shape = box];
+    {
+        START_C_GO_A_FIGHT[label = "A_FIGHT: 干"];
+    }
+
+    START -> START_C_GO -> START_C_GO_A_FIGHT
+    START_C_GO_A_FIGHT -> SUCC
+}

@@ -1,0 +1,19 @@
+{
+    "vars": [
+        ["$MUTE",     "0", "没用的占位变量"]
+    ],
+    "states": {"START":"ENTRY", "SUCC":"FINAL"},
+    "indicators":{
+        "C_GO": ["INDCT_ALWAYS_ACTIVE", [], "GO"]
+    },
+    "actions":{
+        "A_FIGHT":[
+            ["ACT_NO_OPERATION", ["0"]],
+            "干"
+        ]
+    },
+    "transformers":[
+        ["START",         "C_GO",          "A_FIGHT",       ["SUCC"]]
+    ],
+    "instance_number":1
+}

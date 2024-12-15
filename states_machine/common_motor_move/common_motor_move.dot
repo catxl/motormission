@@ -1,0 +1,60 @@
+digraph G{
+    label = "common_motor_move"
+    node [style = filled, color = Green, fontcolor = Red, fontsize = 12, shape = ellipse];
+    {
+        START[label = "START"];
+    }
+    node [style = filled, color = Gray, fontcolor = Red, fontsize = 12, shape = ellipse];
+    {
+        ST_READY[label = "ST_READY"];
+        ST_TARGETING[label = "ST_TARGETING"];
+        ST_COMPENSATE[label = "ST_COMPENSATE"];
+        ST_AGAIN[label = "ST_AGAIN"];
+    }
+    node [style = filled, color = RED, fontcolor = Black, fontsize = 12, shape = doublecircle];
+    {
+        ST_CODED_END[label = "ST_CODED_END"];
+        SUCC[label = "SUCC"];
+    }
+
+    node [fontname="FangSong", style = filled, color = Yellow, fontcolor = Red, fontsize = 12, shape = diamond];
+    {
+        START_C_TRY_LOCK[label = "C_TRY_LOCK: $COMMON_MOTOR 电机使用权获取成功"];
+        ST_READY_C_ACTIVE[label = "C_ACTIVE: $DETECTOR 探测器激活"];
+        ST_READY_C_NOT_ACT[label = "C_NOT_ACT: $DETECTOR 探测器未激活"];
+        ST_TARGETING_C_NOT_MEET_DETECTOR[label = "C_NOT_MEET_DETECTOR: 走完了探测器也未触发"];
+        ST_TARGETING_C_ACTIVE[label = "C_ACTIVE: $DETECTOR 探测器激活"];
+        ST_AGAIN_C_NOT_MEET_DETECTOR[label = "C_NOT_MEET_DETECTOR: 走完了探测器也未触发"];
+        ST_AGAIN_C_ACTIVE[label = "C_ACTIVE: $DETECTOR 探测器激活"];
+        ST_COMPENSATE_C_COMPENSATE_DONE[label = "C_COMPENSATE_DONE: $COMMON_MOTOR 电机补偿运动完成"];
+    }
+    
+    node [fontname="FangSong", style = filled, color = lightskyblue, fontcolor = Black, fontsize = 12, shape = box];
+    {
+        START_C_TRY_LOCK_A_NO_OP[label = "A_NO_OP: 静观其变"];
+        ST_READY_C_ACTIVE_A_QUICK_CLEAR[label = "A_QUICK_CLEAR: 释放电机，操作结束"];
+        ST_READY_C_NOT_ACT_A_TARGET[label = "A_TARGET: 启动探测器，电机向目标方向移动"];
+        ST_TARGETING_C_NOT_MEET_DETECTOR_A_AGAIN[label = "A_AGAIN: 电机补偿移动1"];
+        ST_TARGETING_C_ACTIVE_A_COMPENSATE[label = "A_COMPENSATE: 电机补偿移动2"];
+        ST_AGAIN_C_NOT_MEET_DETECTOR_A_CODED_CLEAR[label = "A_CODED_CLEAR: 停止探测器，释放电机，操作结束"];
+        ST_AGAIN_C_ACTIVE_A_COMPENSATE[label = "A_COMPENSATE: 电机补偿移动2"];
+        ST_COMPENSATE_C_COMPENSATE_DONE_A_CLEAR[label = "A_CLEAR: 停止探测器，释放电机，操作成功"];
+    }
+
+    START -> START_C_TRY_LOCK -> START_C_TRY_LOCK_A_NO_OP
+    START_C_TRY_LOCK_A_NO_OP -> ST_READY
+    ST_READY -> ST_READY_C_ACTIVE -> ST_READY_C_ACTIVE_A_QUICK_CLEAR
+    ST_READY_C_ACTIVE_A_QUICK_CLEAR -> SUCC
+    ST_READY -> ST_READY_C_NOT_ACT -> ST_READY_C_NOT_ACT_A_TARGET
+    ST_READY_C_NOT_ACT_A_TARGET -> ST_TARGETING
+    ST_TARGETING -> ST_TARGETING_C_NOT_MEET_DETECTOR -> ST_TARGETING_C_NOT_MEET_DETECTOR_A_AGAIN
+    ST_TARGETING_C_NOT_MEET_DETECTOR_A_AGAIN -> ST_AGAIN
+    ST_TARGETING -> ST_TARGETING_C_ACTIVE -> ST_TARGETING_C_ACTIVE_A_COMPENSATE
+    ST_TARGETING_C_ACTIVE_A_COMPENSATE -> ST_COMPENSATE
+    ST_AGAIN -> ST_AGAIN_C_NOT_MEET_DETECTOR -> ST_AGAIN_C_NOT_MEET_DETECTOR_A_CODED_CLEAR
+    ST_AGAIN_C_NOT_MEET_DETECTOR_A_CODED_CLEAR -> ST_CODED_END
+    ST_AGAIN -> ST_AGAIN_C_ACTIVE -> ST_AGAIN_C_ACTIVE_A_COMPENSATE
+    ST_AGAIN_C_ACTIVE_A_COMPENSATE -> ST_COMPENSATE
+    ST_COMPENSATE -> ST_COMPENSATE_C_COMPENSATE_DONE -> ST_COMPENSATE_C_COMPENSATE_DONE_A_CLEAR
+    ST_COMPENSATE_C_COMPENSATE_DONE_A_CLEAR -> SUCC
+}
